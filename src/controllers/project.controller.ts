@@ -3,7 +3,7 @@ import Project from '../models/project.model'
 
 export class ProjectController {
   static async getAllProjects (req: Request, res: Response): Promise<Response> {
-    const projects = await Project.find()
+    const projects = await Project.find().populate('tasks', 'name description')
 
     if (projects.length === 0) return res.status(404).json({ message: 'No projects found' })
     if (projects === null || projects === undefined) return res.status(500).json({ message: 'Error fetching projects}' })
