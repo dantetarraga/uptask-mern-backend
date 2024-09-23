@@ -26,4 +26,34 @@ export class ProjectController {
 
     return res.status(201).json({ message: 'Project created' })
   }
+
+  static async getProjectById (req: Request, res: Response): Promise<Response> {
+    const { id } = req.params
+
+    const project = await Project.findById(id)
+
+    if (project === null || project === undefined) return res.status(404).json({ message: 'Project not found' })
+
+    return res.status(200).json({ data: project })
+  }
+
+  static async updateProject (req: Request, res: Response): Promise<Response> {
+    const { id } = req.params
+
+    const project = await Project.findByIdAndUpdate(id, req.body)
+
+    if (project === null || project === undefined) return res.status(404).json({ message: 'Project not found' })
+
+    return res.status(200).json({ message: 'Project updated' })
+  }
+
+  static async deleteProject (req: Request, res: Response): Promise<Response> {
+    const { id } = req.params
+
+    const project = await Project.findByIdAndDelete(id)
+
+    if (project === null || project === undefined) return res.status(404).json({ message: 'Project not found' })
+
+    return res.status(200).json({ message: 'Project deleted' })
+  }
 }
