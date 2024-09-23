@@ -5,12 +5,12 @@ import { validatorFields } from '../middlewares/validator.fields'
 
 const projectRouter = Router()
 
-projectRouter.get(
+projectRouter.get('/', ProjectController.getAllProjects)
+projectRouter.post(
   '/',
   [...projectValidator],
   validatorFields,
-  ProjectController.getAllProjects
+  ProjectController.createProject
 )
-projectRouter.post('/', ProjectController.createProject)
 
 export default projectRouter

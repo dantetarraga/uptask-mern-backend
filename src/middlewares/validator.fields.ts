@@ -6,7 +6,7 @@ export const validatorFields: RequestHandler = (req: Request, res: Response, nex
 
   if (!errors.isEmpty()) {
     return res.status(400).json({
-      errors: errors.mapped()
+      errors: errors.array()
     })
   }
 
