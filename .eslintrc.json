@@ -1,0 +1,12 @@
+{
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "extends": [
+    "./node_modules/ts-standard/eslintrc.json"
+  ],
+  "rules": {
+    "@typescript-eslint/no-extraneous-class": "off",
+    "@typescript-eslint/no-misused-promises": "off"
+  }
+}
