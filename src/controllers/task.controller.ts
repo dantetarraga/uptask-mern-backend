@@ -45,4 +45,42 @@ export class TaskController {
 
     return res.status(200).json({ data: task })
   }
+
+  static async updateTask (req: Request, res: Response): Promise<Response> {
+    const { taskId } = req.params
+
+    const task = await Task.findById(taskId)
+
+    if (task === null || task === undefined) return res.status(404).json({ message: 'Task not found' })
+    if (req.project.id !== task.project.toString()) return res.status(403).json({ message: 'Unauthorized' })
+
+    task.set(req.body)
+    const updateTask = await task.save()
+
+    if (updateTask === null || updateTask === undefined) return res.status(500).json({ message: 'Error updating task' })
+
+    return res.status(200).json({ message: 'Task updated', data: updateTask })
+  }
+
+  static async deleteTask (req: Request, res: Response): Promise<Response> {
+    const { taskId } = req.params
+
+    const task = await Task.findById(taskId)
+
+    if (task === null || task === undefined) return res.status(404).json({ message: 'Task not found' })
+    if (req.project.id !== task.project.toString()) return res.status(403).json({ message: 'Unauthorized' })
+
+    req.project.tasks = req.project.tasks.filter((task) => task?.toString() !== taskId)
+
+    await Promise.allSettled([req.project.save(), task.deleteOne()])
+      .then((results) => {
+        results.forEach((result) => {
+          if (result.status === 'rejected') {
+            return res.status(500).json({ message: 'Error deleting task' })
+          }
+        })
+      })
+
+    return res.status(200).json({ message: 'Task deleted' })
+  }
 }

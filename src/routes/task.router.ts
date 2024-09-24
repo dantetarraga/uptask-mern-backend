@@ -1,7 +1,10 @@
 import { Router } from 'express'
 import { TaskController } from '../controllers/task.controller'
 import { validateProjectExists } from '../middlewares/project-exists.middleware'
-import { validateTaskFields, validateTaskId } from '../validators/task.validator'
+import {
+  validateTaskFields,
+  validateTaskId
+} from '../validators/task.validator'
 import { validatorFields } from '../middlewares/validator-fields.middleware'
 
 const taskRouter = Router()
@@ -14,10 +17,7 @@ taskRouter.post(
   TaskController.createTask
 )
 
-taskRouter.get(
-  '/:projectId/tasks',
-  TaskController.getTasksByProject
-)
+taskRouter.get('/:projectId/tasks', TaskController.getTasksByProject)
 
 taskRouter.get(
   '/:projectId/tasks/:taskId',
@@ -25,5 +25,14 @@ taskRouter.get(
   validatorFields,
   TaskController.getTaskById
 )
+
+taskRouter.put(
+  '/:projectId/tasks/:taskId',
+  [...validateTaskFields, ...validateTaskId],
+  validatorFields,
+  TaskController.updateTask
+)
+
+taskRouter.delete('/:projectId/tasks/:taskId', validateTaskId, TaskController.deleteTask)
 
 export default taskRouter
