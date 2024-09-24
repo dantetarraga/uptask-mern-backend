@@ -4,7 +4,7 @@ import {
   validateProjectId,
   validateProjectFields
 } from '../validators/project.validator'
-import { validatorFields } from '../middlewares/validator.fields'
+import { validatorFields } from '../middlewares/validator-fields.middleware'
 
 const projectRouter = Router()
 
