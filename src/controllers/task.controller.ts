@@ -23,13 +23,26 @@ export class TaskController {
     return res.status(201).json({ message: 'Task created', task })
   }
 
-  static async getAllTask (req: Request, res: Response): Promise<Response> {
+  static async getTasksByProject (req: Request, res: Response): Promise<Response> {
     const project = req.project
 
     const tasks = await Task.find({ project: project.id })
+      .populate('project', 'projectName clientName description')
 
     if (tasks.length === 0) return res.status(404).json({ message: 'No tasks found' })
 
     return res.status(200).json({ data: tasks })
+  }
+
+  static async getTaskById (req: Request, res: Response): Promise<Response> {
+    const { taskId } = req.params
+
+    const task = await Task.findById(taskId).populate('project', 'projectName clientName description')
+
+    if (task === null || task === undefined) return res.status(404).json({ message: 'Task not found' })
+
+    if (task.project.id.toString() !== req.project.id) return res.status(403).json({ message: 'Unauthorized' })
+
+    return res.status(200).json({ data: task })
   }
 }

@@ -7,7 +7,6 @@ import taskRouter from './routes/task.router'
 
 dotenv.config()
 
-// eslint-disable-next-line @typescript-eslint/no-floating-promises
 connectDB()
 
 const app = express()

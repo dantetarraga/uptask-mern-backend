@@ -44,11 +44,11 @@ const TaskSchema: Schema = new Schema({
   }
 })
 
-TaskSchema.method('toJSON', function () {
-  const { __v: version, _id, ...object } = this.toObject()
-  object.id = _id
-  return object
-})
+// TaskSchema.method('toJSON', function () {
+//   const { __v: version, _id, ...object } = this.toObject()
+//   object.id = _id
+//   return object
+// })
 
 const Task = model<ITask>('Task', TaskSchema)
 

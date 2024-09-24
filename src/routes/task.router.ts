@@ -1,21 +1,29 @@
 import { Router } from 'express'
 import { TaskController } from '../controllers/task.controller'
 import { validateProjectExists } from '../middlewares/project-exists.middleware'
-import { validateTask } from '../validators/task.validator'
+import { validateTaskFields, validateTaskId } from '../validators/task.validator'
+import { validatorFields } from '../middlewares/validator-fields.middleware'
 
 const taskRouter = Router()
+taskRouter.param('projectId', validateProjectExists)
 
 taskRouter.post(
   '/:projectId/tasks',
-  validateProjectExists,
+  [...validateTaskFields],
+  validatorFields,
   TaskController.createTask
 )
 
 taskRouter.get(
   '/:projectId/tasks',
-  validateProjectExists,
-  [...validateTask],
-  TaskController.getAllTask
+  TaskController.getTasksByProject
+)
+
+taskRouter.get(
+  '/:projectId/tasks/:taskId',
+  validateTaskId,
+  validatorFields,
+  TaskController.getTaskById
 )
 
 export default taskRouter
