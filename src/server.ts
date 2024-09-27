@@ -2,6 +2,7 @@ import express from 'express'
 import dotenv from 'dotenv'
 import { connectDB } from './database/config'
 import projectRouter from './routes/project.router'
+import cors from 'cors'
 // import authRouter from './routes/auth.router'
 import taskRouter from './routes/task.router'
 
@@ -13,6 +14,7 @@ const app = express()
 
 // Middlewares
 app.use(express.json())
+app.use(cors())
 
 // Routes
 app.use('/api/projects', projectRouter)
