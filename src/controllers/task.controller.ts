@@ -35,24 +35,13 @@ export class TaskController {
   }
 
   static async getTaskById (req: Request, res: Response): Promise<Response> {
-    const { taskId } = req.params
-
-    const task = await Task.findById(taskId).populate('project', 'projectName clientName description')
-
-    if (task === null || task === undefined) return res.status(404).json({ message: 'Task not found' })
-
-    if (task.project.id.toString() !== req.project.id) return res.status(403).json({ message: 'Unauthorized' })
+    const task = req.task
 
     return res.status(200).json({ data: task })
   }
 
   static async updateTask (req: Request, res: Response): Promise<Response> {
-    const { taskId } = req.params
-
-    const task = await Task.findById(taskId)
-
-    if (task === null || task === undefined) return res.status(404).json({ message: 'Task not found' })
-    if (req.project.id !== task.project.toString()) return res.status(403).json({ message: 'Unauthorized' })
+    const task = req.task
 
     task.set(req.body)
     const updateTask = await task.save()
@@ -63,16 +52,11 @@ export class TaskController {
   }
 
   static async deleteTask (req: Request, res: Response): Promise<Response> {
-    const { taskId } = req.params
+    const taskToDelete = req.task
 
-    const task = await Task.findById(taskId)
+    req.project.tasks = req.project.tasks.filter((task) => task?.toString() !== taskToDelete?._id)
 
-    if (task === null || task === undefined) return res.status(404).json({ message: 'Task not found' })
-    if (req.project.id !== task.project.toString()) return res.status(403).json({ message: 'Unauthorized' })
-
-    req.project.tasks = req.project.tasks.filter((task) => task?.toString() !== taskId)
-
-    await Promise.allSettled([req.project.save(), task.deleteOne()])
+    await Promise.allSettled([req.project.save(), taskToDelete.deleteOne()])
       .then((results) => {
         results.forEach((result) => {
           if (result.status === 'rejected') {
@@ -82,5 +66,17 @@ export class TaskController {
       })
 
     return res.status(200).json({ message: 'Task deleted' })
+  }
+
+  static async updateStatusTask (req: Request, res: Response): Promise<Response> {
+    const { status } = req.body
+    const task = req.task
+
+    task.status = status
+    const updateTask = await task.save()
+
+    if (updateTask === null || updateTask === undefined) return res.status(500).json({ message: 'Error updating task' })
+
+    return res.status(200).json({ message: 'Task updated', data: updateTask })
   }
 }
